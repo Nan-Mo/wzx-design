@@ -33,7 +33,6 @@ const StatusDot = ({ type, text, radius = 8, style }: StatusDotProps) => {
           height: `${radius}px`,
         }}
       />
-      111111111111
       {text && text}
     </div>
   );
