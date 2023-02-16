@@ -2,26 +2,26 @@
   "name": "wzx-design",
   "version": "1.0.5",
   "description": "为塔斯汀信息部定制的组件库",
+  "license": "MIT",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "npm run dev",
-    "dev": "dumi dev",
     "build": "father build",
     "build:watch": "father dev",
+    "deploy": "gh-pages -d dist",
+    "dev": "dumi dev",
     "docs:build": "dumi build",
-    "prepare": "husky install && dumi setup",
     "doctor": "father doctor",
     "lint": "npm run lint:es && npm run lint:css",
     "lint:css": "stylelint \"{src,test}/**/*.{css,less}\"",
     "lint:es": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\"",
-    "prepublishOnly": "father doctor && npm run build"
+    "prepare": "husky install && dumi setup",
+    "prepublishOnly": "father doctor && npm run build",
+    "start": "npm run dev"
   },
-  "authors": [],
-  "license": "MIT",
-  "files": [
-    "dist"
-  ],
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
@@ -44,12 +44,26 @@
       "prettier --parser=typescript --write"
     ]
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "peerDependencies": {
-    "react": ">=16.9.0",
-    "react-dom": ">=16.9.0"
+  "dependencies": {
+    "@ant-design/icons": "^5.0.1",
+    "@shihengtech/hooks": "^0.0.16",
+    "antd": "^4.23.5",
+    "antd-colorpicker": "^1.0.0",
+    "braft-editor": "^2.3.9",
+    "braft-utils": "^3.0.12",
+    "classnames": "^2.3.2",
+    "eventemitter3": "^5.0.0",
+    "immutability-helper": "^3.1.1",
+    "lodash": "^4.17.21",
+    "moment": "~2.24.0",
+    "prop-types": "^15.8.1",
+    "qs": "^6.11.0",
+    "react-amap": "^1.2.8",
+    "react-color": "^2.19.3",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-vant": "^3.1.4",
+    "tinycolor2": "^1.5.2"
   },
   "devDependencies": {
     "@babel/runtime": "^7.20.13",
@@ -73,25 +87,12 @@
     "react-dom": "^18.0.0",
     "stylelint": "^14.9.1"
   },
-  "dependencies": {
-    "@ant-design/icons": "^5.0.1",
-    "@shihengtech/hooks": "^0.0.16",
-    "antd": "^4.23.5",
-    "antd-colorpicker": "^1.0.0",
-    "braft-editor": "^2.3.9",
-    "braft-utils": "^3.0.12",
-    "classnames": "^2.3.2",
-    "eventemitter3": "^5.0.0",
-    "immutability-helper": "^3.1.1",
-    "lodash": "^4.17.21",
-    "moment": "~2.24.0",
-    "prop-types": "^15.8.1",
-    "qs": "^6.11.0",
-    "react-amap": "^1.2.8",
-    "react-color": "^2.19.3",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "react-vant": "^3.1.4",
-    "tinycolor2": "^1.5.2"
-  }
+  "peerDependencies": {
+    "react": ">=16.9.0",
+    "react-dom": ">=16.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": []
 }

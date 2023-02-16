@@ -1,17 +1,13 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { Button, Upload } from 'antd';
 import { UploadFile } from 'antd/es/upload/interface';
-import _ from 'lodash';
-import { checkFile, isSuccResponse } from '../utils/utils';
-import tokenUtils from '../utils/tokenUtils';
 import { UploadChangeParam } from 'antd/lib/upload';
-import './index.less';
+import _ from 'lodash';
+import * as React from 'react';
 import { UploadProps } from '.';
+import tokenUtils from '../utils/tokenUtils';
+import { checkFile, isSuccResponse } from '../utils/utils';
+import './index.less';
 
 const FileUploader = ({
   accept,
@@ -31,15 +27,17 @@ const FileUploader = ({
   fileName = '',
   maxCount = 1,
 }: UploadProps) => {
-  const [fileList, setFileList] = useState<Pick<UploadFile, 'uid' | 'status' | 'url' | 'name'>[]>(
-    []
-  );
+  const [fileList, setFileList] = React.useState<
+    Pick<UploadFile, 'uid' | 'status' | 'url' | 'name'>[]
+  >([]);
 
-  const tempFileName = useRef(fileName);
+  const tempFileName = React.useRef(fileName);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (typeof value === 'string' && value && isSingle) {
-      return setFileList([{ uid: '1', status: 'done', name: tempFileName.current, url: value }]);
+      return setFileList([
+        { uid: '1', status: 'done', name: tempFileName.current, url: value },
+      ]);
     }
     if (Array.isArray(value) && value.length) {
       setFileList(() => {
@@ -78,15 +76,14 @@ const FileUploader = ({
         };
       }
     });
-
-    setUploading && setUploading(batchLoading);
+    if (setUploading) setUploading(batchLoading);
     setFileList(fileList as any);
     if (isSingle) {
       tempFileName.current = fileList?.[0]?.name;
     }
     if (!batchLoading) {
       const list = _.compact(fileList.map((file) => file.url));
-      onChange && onChange(isSingle ? list[0] : list);
+      if (onChange) onChange(isSingle ? list[0] : list);
     }
   };
 
@@ -95,7 +92,9 @@ const FileUploader = ({
       accept={accept}
       data={additionalData}
       headers={{ 'user-token': tokenUtils.getToken() }}
-      beforeUpload={beforeUpload ? beforeUpload : (file: File) => checkFile(file, limitSize)}
+      beforeUpload={
+        beforeUpload ? beforeUpload : (file: File) => checkFile(file, limitSize)
+      }
       action={action}
       multiple={multiple}
       fileList={fileList as any}
@@ -108,6 +107,6 @@ const FileUploader = ({
       <Button icon={<UploadOutlined />}>上传文件</Button>
     </Upload>
   );
-}
+};
 
 export default FileUploader;
