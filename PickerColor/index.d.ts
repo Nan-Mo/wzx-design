@@ -7,10 +7,10 @@ export declare type ColorPickerValue = antColorPickerValue;
 declare const PickerColor: ((props: {
     [key: string]: any;
     popup?: boolean | undefined;
-    value?: any;
+    value?: antAnyColorFormat | undefined;
     onChange?: ((value: any) => void) | undefined;
     onChangeComplete?: ((value: any) => void) | undefined;
-    onColorResult?: ((color: ColorResult) => any) | undefined;
+    onColorResult?: ((color: import("react-color").ColorResult) => antAnyColorFormat) | undefined;
     blockStyles?: import("react").CSSProperties | undefined;
     picker?: antColorPickerTypes | undefined;
 }) => JSX.Element) & {

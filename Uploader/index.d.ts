@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
 import { UploadProps as AntUploadProps } from 'antd/es/upload/interface';
+import { ReactNode } from 'react';
+import FileUpload from './FileUpload';
 import './index.less';
 export interface UploadProps extends Omit<AntUploadProps, 'onChange'> {
     limitSize?: number;
@@ -13,5 +14,11 @@ export interface UploadProps extends Omit<AntUploadProps, 'onChange'> {
     children?: ReactNode;
     fileName?: string;
 }
-declare const Uploader: ({ accept, action, maxCount, multiple, disabled, listType, limitSize, beforeUpload, showUploadList, uploading, setUploading, value, onChange, resetValue, isSingle, additionalData, children, className, }: UploadProps) => JSX.Element;
+declare type CompoundedComponent = UploadProps & {
+    FileUpload: typeof FileUpload;
+};
+declare const Uploader: {
+    ({ accept, action, maxCount, multiple, disabled, listType, limitSize, beforeUpload, showUploadList, uploading, setUploading, value, onChange, resetValue, isSingle, additionalData, children, className, }: CompoundedComponent): JSX.Element;
+    FileUpload: ({ accept, action, multiple, disabled, limitSize, beforeUpload, showUploadList, uploading, setUploading, value, onChange, isSingle, additionalData, className, fileName, maxCount, }: UploadProps) => JSX.Element;
+};
 export default Uploader;
