@@ -3,9 +3,7 @@ import { defineConfig } from 'dumi';
 export default defineConfig({
   base: '/wzx-design',
   publicPath: '/wzx-design/',
-  favicons: [
-    'https://shiheng-tech.oss-cn-shanghai.aliyuncs.com/shihengonline//1640835741950/file?Expires=3217635742&OSSAccessKeyId=LTAI4G9rgor8RbRNVjtsLqxi&Signature=rnOyo2IwZ3nzoMnq%2F5Vep1D1rTw%3D',
-  ],
+  favicons: [],
   outputPath: 'docs-dist',
   themeConfig: {
     hd: { rules: [] },
@@ -17,7 +15,7 @@ export default defineConfig({
         link: '/components/export-button',
       },
     ],
-    logo: 'https://shiheng-tech.oss-cn-shanghai.aliyuncs.com/shihengonline//1640835741950/file?Expires=3217635742&OSSAccessKeyId=LTAI4G9rgor8RbRNVjtsLqxi&Signature=rnOyo2IwZ3nzoMnq%2F5Vep1D1rTw%3D',
+    logo: '',
     footer: 'tastaien | Copyright © 2023-present',
     prefersColor: { default: 'light', switch: true },
     socialLinks: {
