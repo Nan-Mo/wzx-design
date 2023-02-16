@@ -1,21 +1,24 @@
+import { CloudUploadOutlined } from '@ant-design/icons';
+import { Button, Modal, Space, Spin, Tooltip, Upload } from 'antd';
+import {
+  UploadFile,
+  UploadProps as AntUploadProps,
+} from 'antd/es/upload/interface';
+import { UploadChangeParam } from 'antd/lib/upload';
+import classNames from 'classnames';
+import update from 'immutability-helper';
+import _ from 'lodash';
 import React, {
-  useRef,
   ReactNode,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
-import { Modal, Spin, Button, Space, Tooltip, Upload } from 'antd';
-import { CloudUploadOutlined } from '@ant-design/icons';
-import { UploadFile, UploadProps as AntUploadProps } from 'antd/es/upload/interface';
-import _ from 'lodash';
-import { checkFile, isSuccResponse } from '../utils/utils';
-import tokenUtils from '../utils/tokenUtils';
-import { UploadChangeParam } from 'antd/lib/upload';
-import update from 'immutability-helper';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import classNames from 'classnames';
+import tokenUtils from '../utils/tokenUtils';
+import { checkFile, isSuccResponse } from '../utils/utils';
 import FileUpload from './FileUpload';
 
 import './index.less';
@@ -23,7 +26,10 @@ import './index.less';
 const type = 'DragableUploadList';
 
 interface DragableUploadListItemProps {
-  originNode: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  originNode: React.ReactElement<
+    any,
+    string | React.JSXElementConstructor<any>
+  >;
   file: UploadFile;
   fileList: UploadFile[];
   moveRow: (dragIndex: any, hoverIndex: any) => void;
@@ -46,7 +52,8 @@ const DragableUploadListItem = ({
       }
       return {
         isOver: monitor.isOver(),
-        dropClassName: dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
+        dropClassName:
+          dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
       };
     },
     drop: (item: any) => {
@@ -61,11 +68,15 @@ const DragableUploadListItem = ({
     }),
   });
   drop(drag(ref));
-  const errorNode = <Tooltip title="Upload Error">{originNode.props.children}</Tooltip>;
+  const errorNode = (
+    <Tooltip title="Upload Error">{originNode.props.children}</Tooltip>
+  );
   return (
     <div
       ref={ref}
-      className={`ant-upload-draggable-list-item ${isOver ? dropClassName : ''}`}
+      className={`ant-upload-draggable-list-item ${
+        isOver ? dropClassName : ''
+      }`}
       style={{ cursor: 'move' }}
     >
       {file.status === 'error' ? errorNode : originNode}
@@ -95,191 +106,203 @@ export interface UploadProps extends Omit<AntUploadProps, 'onChange'> {
   fileName?: string;
 }
 
-const Uploader = (
-  ({
-    accept,
-    action,
-    maxCount = 20,
-    multiple,
-    disabled,
-    listType = 'picture-card',
-    limitSize = 5,
-    beforeUpload,
-    showUploadList,
-    uploading = false,
-    setUploading,
-    value,
-    onChange,
-    resetValue,
-    isSingle,
-    additionalData = null,
-    children,
-    className,
-  }: UploadProps) => {
-    const [previewObj, setPreview] = useState({
-      previewVisible: false,
-      previewImage: '',
-      previewTitle: '',
-    });
+type CompoundedComponent = UploadProps & {
+  FileUpload: typeof FileUpload;
+};
 
-    const [fileList, setFileList] = useState<Pick<UploadFile, 'uid' | 'status' | 'url'>[]>([]);
+const Uploader = ({
+  accept,
+  action,
+  maxCount = 20,
+  multiple,
+  disabled,
+  listType = 'picture-card',
+  limitSize = 5,
+  beforeUpload,
+  showUploadList,
+  uploading = false,
+  setUploading,
+  value,
+  onChange,
+  resetValue,
+  isSingle,
+  additionalData = null,
+  children,
+  className,
+}: CompoundedComponent) => {
+  const [previewObj, setPreview] = useState({
+    previewVisible: false,
+    previewImage: '',
+    previewTitle: '',
+  });
 
-    useEffect(() => {
-      if (typeof value === 'string' && isSingle) {
-        return setFileList([{ uid: '1', status: 'done', url: value }]);
-      }
-      if (Array.isArray(value) && value.length) {
-        setFileList(() => {
-          return value.map((url, idx) => ({
-            uid: String(idx + 1),
-            name: String(idx + 1),
-            status: 'done',
-            url,
-          }));
-        });
-      }
-      if (value === undefined) {
-        setFileList([]);
-      }
-    }, [value]);
+  const [fileList, setFileList] = useState<
+    Pick<UploadFile, 'uid' | 'status' | 'url'>[]
+  >([]);
 
-    const handleCancel = () => {
-      setPreview({ ...previewObj, previewVisible: false });
-    };
-
-    const handlePreview = async (file: UploadFile) => {
-      if (!file.url && !file.preview) {
-        file.preview = (await getBase64(file!.originFileObj!)) as string;
-      }
-      setPreview({
-        previewImage: (file.url || file.preview) as string,
-        previewVisible: true,
-        previewTitle: file.name || '图片预览',
+  useEffect(() => {
+    if (typeof value === 'string' && isSingle) {
+      return setFileList([{ uid: '1', status: 'done', url: value }]);
+    }
+    if (Array.isArray(value) && value.length) {
+      setFileList(() => {
+        return value.map((url, idx) => ({
+          uid: String(idx + 1),
+          name: String(idx + 1),
+          status: 'done',
+          url,
+        }));
       });
-    };
+    }
+    if (value === undefined) {
+      setFileList([]);
+    }
+  }, [value]);
 
-    const handleChange = ({ fileList }: UploadChangeParam) => {
-      let batchLoading = false;
-      fileList.forEach((item, idx) => {
-        const { status, response } = item;
-        if (!status) {
-          fileList[idx] = { ...item, status: 'error' };
-        }
+  const handleCancel = () => {
+    setPreview({ ...previewObj, previewVisible: false });
+  };
 
-        if (status === 'uploading') batchLoading = true;
-        if (status === 'done' && response) {
-          if (!isSuccResponse(response)) {
-            fileList[idx] = {
-              ...item,
-              status: 'error',
-              response: response.msg,
-            };
-            return;
-          }
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = (await getBase64(file!.originFileObj!)) as string;
+    }
+    setPreview({
+      previewImage: (file.url || file.preview) as string,
+      previewVisible: true,
+      previewTitle: file.name || '图片预览',
+    });
+  };
+
+  const handleChange = ({ fileList }: UploadChangeParam) => {
+    let batchLoading = false;
+    fileList.forEach((item, idx) => {
+      const { status, response } = item;
+      if (!status) {
+        fileList[idx] = { ...item, status: 'error' };
+      }
+
+      if (status === 'uploading') batchLoading = true;
+      if (status === 'done' && response) {
+        if (!isSuccResponse(response)) {
           fileList[idx] = {
             ...item,
-            status: response.result ? 'done' : 'error',
-            url: response.result,
+            status: 'error',
+            response: response.msg,
           };
+          return;
         }
-      });
-
-      setUploading && setUploading(batchLoading);
-      setFileList(fileList as any);
-      if (!batchLoading) {
-        const list = _.compact(fileList.map((file) => file.url));
-        onChange && onChange(isSingle ? list[0] : list);
+        fileList[idx] = {
+          ...item,
+          status: response.result ? 'done' : 'error',
+          url: response.result,
+        };
       }
-    };
+    });
+    if (!!setUploading) {
+      setUploading(batchLoading);
+    }
+    setFileList(fileList);
+    if (!batchLoading) {
+      const list = _.compact(fileList.map((file) => file.url));
+      if (onChange) {
+        onChange(isSingle ? list[0] : list);
+      }
+    }
+  };
 
-    const moveRow = useCallback(
-      (dragIndex: number, hoverIndex: number) => {
-        const dragRow = fileList[dragIndex];
-        setFileList((currentFileList) => {
-          const newFileList = [...currentFileList];
-          newFileList.splice(dragIndex, 1);
-          newFileList.splice(hoverIndex, 0, dragRow);
-          return newFileList;
-        });
-        // const dragRow = fileList[dragIndex];
-        // const newList = update(fileList, {
-        //   $splice: [
-        //     [dragIndex, 1],
-        //     [hoverIndex, 0, dragRow],
-        //   ],
-        // });
-        // setFileList(newList as any);
-        // const list = _.compact(newList.map((file) => file.url));
-        // onChange && onChange(isSingle ? list[0] : list);
-      },
-      [fileList]
-    );
+  const moveRow = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const dragRow = fileList[dragIndex];
+      const newList = update(fileList, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragRow],
+        ],
+      });
+      setFileList(newList);
+      const list: string[] = _.compact(
+        newList.map((file: { url: string }) => file.url),
+      );
+      if (onChange) {
+        onChange(isSingle ? list[0] : list);
+      }
+    },
+    [fileList],
+  );
 
-    return (
-      <>
-        <Space align="end">
-          <DndProvider backend={HTML5Backend}>
-            <Upload
-              accept={accept}
-              data={additionalData}
-              headers={{ 'user-token': tokenUtils.getToken() }}
-              beforeUpload={
-                beforeUpload ? beforeUpload : (file: File) => checkFile(file, limitSize)
+  return (
+    <>
+      <Space align="end">
+        <DndProvider backend={HTML5Backend}>
+          <Upload
+            accept={accept}
+            data={additionalData}
+            headers={{ 'user-token': tokenUtils.getToken() }}
+            beforeUpload={
+              beforeUpload
+                ? beforeUpload
+                : (file: File) => checkFile(file, limitSize)
+            }
+            action={action}
+            multiple={multiple}
+            listType={listType}
+            fileList={fileList as any}
+            onPreview={handlePreview}
+            onChange={handleChange}
+            disabled={disabled || uploading}
+            showUploadList={showUploadList}
+            className={classNames('loadImg', className)}
+            itemRender={(originNode, file, currFileList) => (
+              <DragableUploadListItem
+                originNode={originNode}
+                file={file}
+                fileList={currFileList}
+                moveRow={moveRow}
+              />
+            )}
+          >
+            {fileList.length >= maxCount
+              ? null
+              : children || (
+                  <div>
+                    <Spin spinning={uploading}>
+                      <CloudUploadOutlined />
+                      <div> 点击上传</div>
+                    </Spin>
+                  </div>
+                )}
+          </Upload>
+        </DndProvider>
+        {resetValue && (
+          <Button
+            type="primary"
+            onClick={() => {
+              if (onChange) {
+                onChange(resetValue as string[]);
               }
-              action={action}
-              multiple={multiple}
-              listType={listType}
-              fileList={fileList as any}
-              onPreview={handlePreview}
-              onChange={handleChange}
-              disabled={disabled || uploading}
-              showUploadList={showUploadList}
-              className={classNames('loadImg', className)}
-              itemRender={(originNode, file, currFileList) => (
-                <DragableUploadListItem
-                  originNode={originNode}
-                  file={file}
-                  fileList={currFileList}
-                  moveRow={moveRow}
-                />
-              )}
-            >
-              {fileList.length >= maxCount
-                ? null
-                : children || (
-                    <div>
-                      <Spin spinning={uploading}>
-                        <CloudUploadOutlined />
-                        <div> 点击上传</div>
-                      </Spin>
-                    </div>
-                  )}
-            </Upload>
-          </DndProvider>
-          {resetValue && (
-            <Button
-              type="primary"
-              onClick={() => {
-                onChange && onChange(resetValue as string[]);
-              }}
-            >
-              重置
-            </Button>
-          )}
-        </Space>
+            }}
+          >
+            重置
+          </Button>
+        )}
+      </Space>
 
-        <Modal
-          open={previewObj.previewVisible}
-          title={previewObj.previewTitle}
-          footer={null}
-          onCancel={handleCancel}
-        >
-          <img alt="example" style={{ width: '100%' }} src={previewObj.previewImage} />
-        </Modal>
-      </>
-    );
-  }
-);
+      <Modal
+        open={previewObj.previewVisible}
+        title={previewObj.previewTitle}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <img
+          alt="example"
+          style={{ width: '100%' }}
+          src={previewObj.previewImage}
+        />
+      </Modal>
+    </>
+  );
+};
 
 Uploader.FileUpload = FileUpload;
 
