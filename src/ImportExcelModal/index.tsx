@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Button, Col, Row, Input, Upload, Modal, ModalProps, Spin } from 'antd';
+import { Button, Col, Input, Modal, ModalProps, Row, Spin, Upload } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
+import * as React from 'react';
 
 import {
   CheckCircleFilled,
@@ -12,8 +12,8 @@ import {
   PaperClipOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
-import './index.less';
 import { useState } from 'react';
+import './index.less';
 
 export enum ImportStatusEnum {
   /** 上传中 */
@@ -45,11 +45,11 @@ type sucStatus = {
   [k: string]: any;
 };
 
-type UploadRes = { 
+type UploadRes = {
   failExcelUrl?: string;
   failCount?: number;
-  successCount: number
-}
+  successCount: number;
+};
 
 export type IStatusRender = normalStatus | partSucStatus | sucStatus;
 
@@ -62,7 +62,12 @@ const StatusRender = ({
   onClose,
 }: IStatusRender & { onClose: () => void }) => {
   const processJsx = (
-    <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-align_middle")}>
+    <div
+      className={classnames(
+        'tst-import-excel-modal-flex',
+        'tst-import-excel-modal-align_middle',
+      )}
+    >
       <Spin className="tst-import-excel-modal-spin" />
       数据批量导入中，请耐心等待...
     </div>
@@ -70,11 +75,21 @@ const StatusRender = ({
 
   const failJsx = (
     <div>
-      <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-align_middle")}>
+      <div
+        className={classnames(
+          'tst-import-excel-modal-flex',
+          'tst-import-excel-modal-align_middle',
+        )}
+      >
         <CloseCircleFilled className="tst-import-excel-modal-fail" />
         {failMsg ? failMsg : '导入失败,请使用正确的导入模版'}
       </div>
-      <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-justify_end")}>
+      <div
+        className={classnames(
+          'tst-import-excel-modal-flex',
+          'tst-import-excel-modal-justify_end',
+        )}
+      >
         <Button onClick={onClose} type="primary">
           确定
         </Button>
@@ -84,11 +99,17 @@ const StatusRender = ({
 
   const partSuccessJsx = (
     <div>
-      <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-flex_column")}>
+      <div
+        className={classnames(
+          'tst-import-excel-modal-flex',
+          'tst-import-excel-modal-flex_column',
+        )}
+      >
         <div className="tst-import-excel-modal-flex">
           <InfoCircleFilled className="tst-import-excel-modal-warning" />
           <span>
-            共有 <span className="tst-import-excel-modal-red">{total}条</span> 数据，其中
+            共有 <span className="tst-import-excel-modal-red">{total}条</span>{' '}
+            数据，其中
             <span className="tst-import-excel-modal-red">{failLength}条</span>
             <br />
             数据导入失败，请下载失败文件查看详情
@@ -99,7 +120,12 @@ const StatusRender = ({
           下载失败列表
         </a>
       </div>
-      <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-justify_end")}>
+      <div
+        className={classnames(
+          'tst-import-excel-modal-flex',
+          'tst-import-excel-modal-justify_end',
+        )}
+      >
         <Button onClick={onClose} type="primary">
           确定
         </Button>
@@ -109,11 +135,24 @@ const StatusRender = ({
 
   const successJsx = (
     <div>
-      <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-align_middle")}>
+      <div
+        className={classnames(
+          'tst-import-excel-modal-flex',
+          'tst-import-excel-modal-align_middle',
+        )}
+      >
         <CheckCircleFilled className="tst-import-excel-modal-success" />
-        成功导入<span className="tst-import-excel-modal-red">{total}条</span> 数据
+        成功导入<span className="tst-import-excel-modal-red">
+          {total}条
+        </span>{' '}
+        数据
       </div>
-      <div className={classnames("tst-import-excel-modal-flex", "tst-import-excel-modal-justify_end")}>
+      <div
+        className={classnames(
+          'tst-import-excel-modal-flex',
+          'tst-import-excel-modal-justify_end',
+        )}
+      >
         <Button onClick={onClose} type="primary">
           确定
         </Button>
@@ -156,7 +195,7 @@ const ImportModal = ({
   const [statusData, setStatusData] = useState<IStatusRender>({
     status: ImportStatusEnum.pickFile,
   });
-  
+
   const { status } = statusData;
   const uploadingStatus = status !== ImportStatusEnum.pickFile;
 
@@ -172,7 +211,7 @@ const ImportModal = ({
           : res?.failCount
           ? ImportStatusEnum.fail
           : ImportStatusEnum.success;
-  
+
         setStatusData({
           ...statusData,
           status,
@@ -181,7 +220,7 @@ const ImportModal = ({
           failLength: res.failCount,
         });
       }
-    } catch(e: any) {
+    } catch (e: any) {
       setStatusData({
         ...statusData,
         status: ImportStatusEnum.fail,
@@ -208,8 +247,8 @@ const ImportModal = ({
   const onClosImportExcelModale = (refresh: boolean) => {
     setStatusData({ status: ImportStatusEnum.pickFile });
     onClose(refresh);
-  }
-  
+  };
+
   return (
     <Modal
       {...modalProps}
@@ -221,7 +260,10 @@ const ImportModal = ({
       afterClose={resetFileHandle}
     >
       {uploadingStatus ? (
-        StatusRender({ ...statusData, onClose: () => onClosImportExcelModale(true) })
+        StatusRender({
+          ...statusData,
+          onClose: () => onClosImportExcelModale(true),
+        })
       ) : (
         <>
           <Row style={{ margin: '0 24px' }}>
@@ -232,7 +274,11 @@ const ImportModal = ({
                   readOnly
                   value={file?.name}
                   className="tst-import-excel-modal-input"
-                  addonBefore={file && <PaperClipOutlined className="tst-import-excel-modal-input-before" />}
+                  addonBefore={
+                    file && (
+                      <PaperClipOutlined className="tst-import-excel-modal-input-before" />
+                    )
+                  }
                   suffix={
                     !!file && (
                       <span onClick={resetFileHandle}>
@@ -256,12 +302,15 @@ const ImportModal = ({
             </Col>
             <Col offset={7}>
               {downloadTemplate ? (
-                <a className="tst-import-excel-modal-download-template" onClick={async () => {
-                  setDownloadLoading(true);
-                  const res = await downloadTemplate()
-                  setDownloadLoading(false);
-                  window.open(res);
-                }}>
+                <a
+                  className="tst-import-excel-modal-download-template"
+                  onClick={async () => {
+                    setDownloadLoading(true);
+                    const res = await downloadTemplate();
+                    setDownloadLoading(false);
+                    window.open(res);
+                  }}
+                >
                   {downloadLoading ? (
                     <LoadingOutlined className="tst-import-excel-modal-download-template-icon" />
                   ) : (
@@ -270,11 +319,12 @@ const ImportModal = ({
                   下载导入模版
                 </a>
               ) : (
-                <a 
-                  href={templateUrl} 
+                <a
+                  href={templateUrl}
                   target="_blank"
-                  download 
+                  download
                   className="tst-import-excel-modal-download-template"
+                  rel="noreferrer"
                 >
                   <DownloadOutlined className="tst-import-excel-modal-download-template-icon" />
                   下载导入模版
@@ -282,8 +332,16 @@ const ImportModal = ({
               )}
             </Col>
           </Row>
-          <Row justify="end" align="middle" className="tst-import-excel-modal-footer">
-            <Button type="primary" onClick={() => submitHandle()} disabled={!file}>
+          <Row
+            justify="end"
+            align="middle"
+            className="tst-import-excel-modal-footer"
+          >
+            <Button
+              type="primary"
+              onClick={() => submitHandle()}
+              disabled={!file}
+            >
               开始导入
             </Button>
           </Row>
