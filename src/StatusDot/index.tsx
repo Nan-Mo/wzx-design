@@ -15,21 +15,16 @@ const bgColorMap = {
   cancel: '#bdbebd',
 };
 
-const StatusDot = ({ 
-	type,
-	text,
-	radius = 8,
-  style,
-}: StatusDotProps) => {
+const StatusDot = ({ type, text, radius = 8, style }: StatusDotProps) => {
   return (
-    <div 
-			style={{
-				display: 'flex',
-				alignItems: 'center',
-				gap: '4px',
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
         ...style,
-			}}
-		>
+      }}
+    >
       <div
         style={{
           backgroundColor: bgColorMap[type],
@@ -38,10 +33,10 @@ const StatusDot = ({
           height: `${radius}px`,
         }}
       />
+      111111111111
       {text && text}
     </div>
   );
-}
+};
 
 export default StatusDot;
-
