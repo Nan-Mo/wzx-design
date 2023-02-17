@@ -1,6 +1,6 @@
 {
   "name": "wzx-design",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "为塔斯汀信息部定制的组件库",
   "license": "MIT",
   "module": "dist/index.js",
