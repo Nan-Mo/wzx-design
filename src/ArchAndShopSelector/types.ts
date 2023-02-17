@@ -1,4 +1,4 @@
-type TreeWith<T = {}> = T & {
+type TreeWith<T = object> = T & {
   children?: TreeWith<T>[];
 };
 
@@ -15,31 +15,35 @@ export type ArchNode = TreeWith<{
   shopInfos?: ShopNode[];
 }>;
 
-// export interface BaseArchAndShopSectorProps {
-//   archList?: ArchNode[];
-//   disabled?: boolean | [boolean, boolean];
-//   defaultValue?: number[];
-//   defaultArchValue?: number[];
-// }
+export interface BaseArchAndShopSectorProps {
+  archList?: ArchNode[];
+  disabled?: boolean | [boolean, boolean];
+  defaultValue?: number[];
+  defaultArchValue?: number[];
+}
 
-// export interface ShopControlledSelectorProps extends BaseArchAndShopSectorProps {
-//   controlMode?: 'SHOP';
-//   value?: number[];
-//   onChange?: (value?: number[]) => void;
-// }
+export interface ShopControlledSelectorProps
+  extends BaseArchAndShopSectorProps {
+  controlMode?: 'SHOP';
+  value?: number[];
+  onChange?: (value?: number[]) => void;
+}
 
-// export interface BothControlledSelectorProps extends BaseArchAndShopSectorProps {
-//   controlMode: 'BOTH';
-//   value?: ArchAndShopValue;
-//   onChange?: (value: ArchAndShopValue) => void;
-// }
+export interface BothControlledSelectorProps
+  extends BaseArchAndShopSectorProps {
+  controlMode: 'BOTH';
+  value?: ArchAndShopValue;
+  onChange?: (value: ArchAndShopValue) => void;
+}
 
-// export type ArchAndShopSelectorProps = ShopControlledSelectorProps | BothControlledSelectorProps;
+export type ArchAndShopSelectorProps =
+  | ShopControlledSelectorProps
+  | BothControlledSelectorProps;
 
-// export type ArchAndShopValue = [number[] | undefined, number[] | undefined];
+export type ArchAndShopValue = [number[] | undefined, number[] | undefined];
 
-// export type ArchDataManager = {
-//   data: ArchNode[] | undefined;
-//   isLoading: boolean;
-//   refetch: () => void;
-// };
+export type ArchDataManager = {
+  data: ArchNode[] | undefined;
+  isLoading: boolean;
+  refetch: () => void;
+};
