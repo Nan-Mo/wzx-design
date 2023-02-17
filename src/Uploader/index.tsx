@@ -107,7 +107,7 @@ export interface UploadProps extends Omit<AntUploadProps, 'onChange'> {
 }
 
 type CompoundedComponent = UploadProps & {
-  FileUpload: typeof FileUpload;
+  FileUpload?: typeof FileUpload;
 };
 
 const Uploader = ({
