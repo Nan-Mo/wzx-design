@@ -1,10 +1,10 @@
-import * as React from 'react';
 import { Col, Row } from 'antd';
-import { formatCN, types } from '../../const';
-import moment from 'moment';
 import classNames from 'classnames';
+import moment from 'moment';
+import * as React from 'react';
 import { ReactNode } from 'react';
-import { DateType } from '../../index';
+import { formatCN, TYPES } from '../../const';
+import { Context, DateType } from '../../index';
 
 import './index.less';
 
@@ -21,8 +21,11 @@ function ColumnsTop({
   setChangeValue: (date: any) => void;
   bottom?: () => ReactNode;
 }) {
+  const data = React.useContext(Context);
 
-  const onClick = (t: { name?: string; type: DateType; }) => {
+  const types = TYPES.filter((item) => data.includes(item?.type));
+
+  const onClick = (t: { name?: string; type: DateType }) => {
     let date: any;
     switch (t.type) {
       case 'date':
@@ -35,17 +38,14 @@ function ColumnsTop({
         date = `${moment().subtract(1, 'months').format('YYYY年MM月')}`;
         break;
       case 'custom':
-        date = [
-          formatCN(),
-          moment().add(31, 'day').format('YYYY-MM-DD'),
-        ];
+        date = [formatCN(), moment().add(31, 'day').format('YYYY-MM-DD')];
         break;
       default:
         break;
     }
     setChangeValue(date);
     setType(t.type);
-  }
+  };
 
   return (
     <div className="tst-date-picker-columns-top">
@@ -55,21 +55,25 @@ function ColumnsTop({
             <Col
               onClick={() => onClick(t)}
               key={t.type}
-              span={6}
-              className={classNames("tst-date-picker-columns-top-radio-box-item", {
-                ["tst-date-picker-columns-top-radio-box-item-active"]: t.type === type,
-              })}
+              span={24 / types.length}
+              className={classNames(
+                'tst-date-picker-columns-top-radio-box-item',
+                {
+                  ['tst-date-picker-columns-top-radio-box-item-active']:
+                    t.type === type,
+                },
+              )}
             >
               {t.name}
             </Col>
           ))}
         </Row>
       </div>
-      {bottom
-        ? bottom()
-        : (
-          <div className="tst-date-picker-columns-top-time">{changeValue}</div>
-        )}
+      {bottom ? (
+        bottom()
+      ) : (
+        <div className="tst-date-picker-columns-top-time">{changeValue}</div>
+      )}
     </div>
   );
 }

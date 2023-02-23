@@ -33,8 +33,26 @@ import { DatePicker } from 'wzx-design';
 
 const App = () => (
   <DatePicker
+    subTitle="支持营业、自然日切换"
     businessDaySwitch
-    searchBusinessDay={false}
+    searchBusinessDay
+    onChange={(value) => console.log(value)}
+    onType={(value) => console.log(value)}
+  />
+);
+
+export default App;
+```
+
+## 动态配置可选日期类型
+
+```tsx
+import React from 'react';
+import { DatePicker } from 'wzx-design';
+
+const App = () => (
+  <DatePicker
+    pickDateType={['date', 'week']}
     onChange={(value) => console.log(value)}
     onType={(value) => console.log(value)}
   />
@@ -53,3 +71,4 @@ export default App;
 | businessDaySwitch | 是否开启营业、自然日切换                     | boolean                  | -                      |
 | searchBusinessDay | 如果开启开启营业、自然日切换，是否支持营业日 | boolean                  | true                   |
 | rightIcon         | 右侧 Icon                                    | ReactNode                | `<CalendarOutlined />` |
+| subTitle          | 日、周、月的副标题                           | -                        | -                      |

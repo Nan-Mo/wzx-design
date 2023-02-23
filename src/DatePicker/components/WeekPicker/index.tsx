@@ -1,5 +1,5 @@
-import * as React from 'react';
 import moment from 'moment';
+import * as React from 'react';
 import { memo, ReactNode, useEffect, useMemo, useState } from 'react';
 import { Picker } from 'react-vant';
 
@@ -9,7 +9,6 @@ const getWeek = (y: any) => {
   if (oneDay.format('wo') === '1周') {
     oneWeek = oneDay.startOf('week').format('YYYY-MM-DD');
   } else {
-    console.log('weeks');
     oneDay.add(1, 'weeks');
     oneWeek = oneDay.startOf('week').format('YYYY-MM-DD');
   }
@@ -18,10 +17,13 @@ const getWeek = (y: any) => {
   do {
     let d: { value: string; text: string } = { value: '', text: '' };
     let time = moment(oneWeek);
-    d.value = `${time.startOf('week').format('MM-DD')}~${time.endOf('week').format('MM-DD')}`;
+    console.log(time, 'time');
+    d.value = `${time.startOf('week').format('MM-DD')}~${time
+      .endOf('week')
+      .format('MM-DD')}`;
+
     d.text = time.format('第wo');
-    // d = `${time.format('第wo')}（${time.startOf('week').format('MM/DD')}-${}）`;
-    // d = time.format('第wo');
+    console.log(d, 'time');
     arr.push(d);
     oneDay.add(1, 'weeks');
     oneWeek = oneDay.startOf('week').format('YYYY-MM-DD');
@@ -64,7 +66,7 @@ export default memo<IWeekPickerProps>(
       for (let i = minYear; i < maxYear; i++) {
         cols[i] = getWeek(i);
       }
-
+      console.log(cols, 'cols');
       const week = moment().subtract(7, 'days').format('第wo');
 
       const index = Object.keys(cols).findIndex((y) => y === year);
@@ -94,10 +96,13 @@ export default memo<IWeekPickerProps>(
           return column.values[column.defaultIndex];
         });
 
-        onDefaultChange(`${newColumns[0].text}${newColumns[1].text} （${newColumns[1].value}）`);
+        onDefaultChange(
+          `${newColumns[0].text}${newColumns[1].text} （${newColumns[1].value}）`,
+        );
       }
     }, []);
 
+    console.log(columns, 'columns');
     return (
       <Picker
         title={title}
@@ -113,7 +118,10 @@ export default memo<IWeekPickerProps>(
         }}
         onConfirm={(values: any) => {
           const dates = values[1].value.split('~');
-          const datesArray = [`${values[0].value}-${dates[0]}`, `${values[0].value}-${dates[1]}`];
+          const datesArray = [
+            `${values[0].value}-${dates[0]}`,
+            `${values[0].value}-${dates[1]}`,
+          ];
           onConfirm({
             dates: datesArray,
             text: `${values[0].text}${values[1].text}`,
@@ -121,5 +129,5 @@ export default memo<IWeekPickerProps>(
         }}
       />
     );
-  }
+  },
 );

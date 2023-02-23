@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { DateType } from '.';
 
-export const types: { name: string; type: DateType }[] = [
+export const TYPES: { name: string; type: DateType }[] = [
   {
     name: '日',
     type: 'date',
@@ -30,14 +30,14 @@ export const date = {
 
 const today = `${moment().format('YYYY-MM-DD')}`;
 
-export const formatCN = (val?: any) => moment(val).format('YYYY年MM月DD日')
+export const formatCN = (val?: any) => moment(val).format('YYYY年MM月DD日');
 
 export const defaultStartTime = {
   text: moment().subtract(8, 'day').format('YYYY年MM月DD日'),
   value: moment(today).subtract(8, 'day'),
-}
+};
 
 export const defaultEndTime = {
   text: moment().subtract(1, 'day').format('YYYY年MM月DD日'),
   value: moment(today).subtract(1, 'day'),
-}
+};

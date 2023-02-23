@@ -1,31 +1,28 @@
+import classNames from 'classnames';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
-import classNames from "classnames";
-import moment, { Moment } from "moment";
-import { useState } from "react";
-import { DatetimePicker } from "react-vant";
-import { PickerDateSwitchProps } from "../../index";
+import { useState } from 'react';
+import { DatetimePicker } from 'react-vant';
+import { date, defaultEndTime, defaultStartTime, formatCN } from '../../const';
+import { PickerDateSwitchProps } from '../../index';
 import ColumnsTop from '../ColumnsTop/index';
-import { date, defaultEndTime, defaultStartTime, formatCN } from "../../const";
-import DialogAlert from "../DialogAlert";
+import DialogAlert from '../DialogAlert';
+import Title from '../Title';
 import './index.less';
 
 type Time = { text: string; value: Moment };
 
 interface StartAndEndTimeProps {
   onClick: () => void;
-  active: boolean
-  text?: string
+  active: boolean;
+  text?: string;
 }
 
 const getDateValueOf = (date: moment.Moment) => {
-  return new Date(`${date.format('YYYY-MM-DD')}`).valueOf()
-}
+  return new Date(`${date.format('YYYY-MM-DD')}`).valueOf();
+};
 
-const StartAndEndTime = ({
-  onClick,
-  active,
-  text
-}: StartAndEndTimeProps) => {
+const StartAndEndTime = ({ onClick, active, text }: StartAndEndTimeProps) => {
   return (
     <div
       onClick={onClick}
@@ -35,33 +32,8 @@ const StartAndEndTime = ({
     >
       {text}
     </div>
-  )
-}
-
-const Title = () => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-    }}
-  >
-    <span
-      style={{
-        marginTop: '10px',
-      }}
-    >
-      选择时间
-    </span>
-    <span
-      style={{
-        color: '#686868',
-        fontSize: '14px',
-      }}
-    >
-      时段相差不超过31天
-    </span>
-  </div>
-)
+  );
+};
 
 const CustomDate = ({
   onConfirm,
@@ -75,24 +47,25 @@ const CustomDate = ({
   const [startTime, setStartTime] = useState<Time>(defaultStartTime);
   const [endTime, setEndTime] = useState<Time>(defaultEndTime);
 
-  const value = isStartOrEnd === 'start'
-    ? startTime.value.toDate()
-    : isStartOrEnd === 'end'
+  const value =
+    isStartOrEnd === 'start'
+      ? startTime.value.toDate()
+      : isStartOrEnd === 'end'
       ? endTime.value.toDate()
-      : startTime.value.toDate()
+      : startTime.value.toDate();
 
   const onChangeDatetimePicker = (val: any) => {
     const dateValue = {
       text: formatCN(val),
       value: moment(val),
-    }
+    };
     if (isStartOrEnd === 'start') {
       setStartTime(dateValue);
     }
     if (isStartOrEnd === 'end') {
       setEndTime(dateValue);
     }
-  }
+  };
 
   const onConfirmDatetimePicker = () => {
     const startTimeValue = startTime.value;
@@ -103,27 +76,27 @@ const CustomDate = ({
     const startValueOf = getDateValueOf(startTimeValue);
 
     if (endValueOf > nowValueOf) {
-      DialogAlert('结束时间不能大于当前时间')
+      DialogAlert('结束时间不能大于当前时间');
       return;
     }
     if (endValueOf < startValueOf) {
-      DialogAlert('结束时间不能小于开始时间')
+      DialogAlert('结束时间不能小于开始时间');
       return;
     }
     if (endValueOf >= limit31Day) {
-      DialogAlert('已超过31天，请重新选择')
+      DialogAlert('已超过31天，请重新选择');
       return;
     }
 
     const parma = {
       dates: [startTimeValue, endTimeValue],
     };
-    onConfirm(`${startTime.text} ~ ${endTime.text}`, parma)
-  }
+    onConfirm(`${startTime.text} ~ ${endTime.text}`, parma);
+  };
 
   return (
     <DatetimePicker
-      title={<Title />}
+      title={<Title subTitle="时段相差不超过31天" />}
       type="date"
       minDate={date.minDate}
       maxDate={date.maxDate}
@@ -159,7 +132,7 @@ const CustomDate = ({
         />
       }
     />
-  )
-}
+  );
+};
 
 export default CustomDate;

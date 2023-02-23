@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Popup, Field } from 'react-vant';
 import { CalendarOutlined } from '@ant-design/icons';
-import BusinessDaySwitch from './components/BusinessDaySwitch';
+import * as React from 'react';
+import { Field, Popup } from 'react-vant';
 import { PickerCustom, PickerDate, PickerWeek } from './components';
+import BusinessDaySwitch from './components/BusinessDaySwitch';
 import { formatCN } from './const';
 
 import './index.less';
@@ -16,23 +16,31 @@ export type DatePickerIndexProps = {
   rightIcon?: React.ReactNode;
   style?: React.CSSProperties;
   searchBusinessDay?: boolean;
+  pickDateType?: DateType[];
+  subTitle?: string;
 };
 
+export const Context = React.createContext<DateType[]>([]);
+
+const ContextProvider = Context.Provider;
 export interface PickerDateSwitchProps {
-  setChangeValue: (params: any) => void
-  onCancel: () => void
+  setChangeValue: (params: any) => void;
+  onCancel: () => void;
   onConfirm: (file: any, parma: any) => void;
-  setType: (t: any) => void
-  changeValue: number
+  setType: (t: any) => void;
+  changeValue: number;
+  subTitle?: string;
 }
 
-const DatePickerIndex = (({
+const DatePickerIndex = ({
   onChange,
   onType,
   businessDaySwitch,
   rightIcon = <CalendarOutlined className="tst-date-picker-right-icon" />,
   style,
   searchBusinessDay,
+  pickDateType = ['date', 'week', 'year-month', 'custom'],
+  subTitle,
 }: DatePickerIndexProps) => {
   const [showPicker, setShowPicker] = React.useState(false);
   const [fieldValue, setFieldValue] = React.useState<string>(formatCN());
@@ -43,21 +51,21 @@ const DatePickerIndex = (({
     setFieldValue(fieldValue);
     onChange(parma);
     setShowPicker(false);
-  }
+  };
 
-  const onCancel = () => setShowPicker(false)
+  const onCancel = () => setShowPicker(false);
 
   const setTypeDateSwitch = (t: any) => {
     setType(t);
     onType?.(t);
-  }
+  };
 
   const DateSwitch = () => {
     switch (type) {
       case 'date':
-      case 'year-month':
         return (
           <PickerDate
+            subTitle={subTitle}
             type={type}
             onCancel={onCancel}
             onConfirm={onConfirm}
@@ -65,17 +73,30 @@ const DatePickerIndex = (({
             setType={setTypeDateSwitch}
             setChangeValue={setChangeValue}
           />
-        )
-      case 'week':
+        );
+      case 'year-month':
         return (
-          <PickerWeek
+          <PickerDate
+            subTitle={subTitle}
+            type={type}
             onCancel={onCancel}
             onConfirm={onConfirm}
             changeValue={changeValue}
             setType={setTypeDateSwitch}
             setChangeValue={setChangeValue}
           />
-        )
+        );
+      case 'week':
+        return (
+          <PickerWeek
+            subTitle={subTitle}
+            onCancel={onCancel}
+            onConfirm={onConfirm}
+            changeValue={changeValue}
+            setType={setTypeDateSwitch}
+            setChangeValue={setChangeValue}
+          />
+        );
       case 'custom':
         return (
           <PickerCustom
@@ -85,18 +106,15 @@ const DatePickerIndex = (({
             setType={setTypeDateSwitch}
             setChangeValue={setChangeValue}
           />
-        )
+        );
       default:
-        return null
+        return null;
     }
   };
 
   return (
-    <>
-      <div
-        style={style}
-        className="tst-date-picker-field-box"
-      >
+    <ContextProvider value={pickDateType}>
+      <div style={style} className="tst-date-picker-field-box">
         {businessDaySwitch && (
           <BusinessDaySwitch
             searchBusinessDay={searchBusinessDay}
@@ -121,8 +139,8 @@ const DatePickerIndex = (({
       >
         {DateSwitch()}
       </Popup>
-    </>
+    </ContextProvider>
   );
-});
+};
 
 export default DatePickerIndex;
